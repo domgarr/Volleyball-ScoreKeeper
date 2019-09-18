@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VolleyballScoreKeeper</string>
+    <string name="ble_not_supported">BLE not available on current device.</string>
+
 </resources>

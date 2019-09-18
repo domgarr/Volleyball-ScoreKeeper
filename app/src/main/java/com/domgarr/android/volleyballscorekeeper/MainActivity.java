@@ -1,71 +1,96 @@
 package com.domgarr.android.volleyballscorekeeper;
 
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private DialogFragment newGameDialogMessage;
+    private DialogFragment vNewGameDialogMessage;
 
-    private TextView redScoreTextView;
-    private TextView blueScoreTextView;
+    private TextView vRedScoreTextView;
+    private TextView vBlueScoreTextView;
 
-    private int redScore;
-    private int blueScore;
+    private int mRedScore;
+    private int mBlueScore;
+
+    private BluetoothAdapter mBluetoothAdapter;
+    private boolean mScanning;
+    private Handler mHandler;
+
+    private final static int REQUEST_ENABLE_BT = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        isBluetoothLeSupported();
+        mBluetoothAdapter = initBluetoothAdapter();
+
+        //Check if Bluetooth is enabled. If it's not, ask the user to turn on bluetooth.
+        if(!isBluetoothEnabled(mBluetoothAdapter)){
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Dialog class prompt user if they really want to reset the game.
-        newGameDialogMessage = new MainActivity.NewGameDialogMessage();
+        vNewGameDialogMessage = new MainActivity.NewGameDialogMessage();
 
-        redScoreTextView = (TextView) findViewById(R.id.red_text_view);
-        blueScoreTextView = (TextView) findViewById(R.id.blue_text_view);
+        vRedScoreTextView = (TextView) findViewById(R.id.red_text_view);
+        vBlueScoreTextView = (TextView) findViewById(R.id.blue_text_view);
 
-        redScore = 0;
-        blueScore = 0;
+        mRedScore = 0;
+        mBlueScore = 0;
 
         render();
     }
 
     private void render(){
         if(!won()) {
-            redScoreTextView.setText("" + redScore);
-            blueScoreTextView.setText("" + blueScore);
+            vRedScoreTextView.setText("" + mRedScore);
+            vBlueScoreTextView.setText("" + mBlueScore);
         }
     }
 
     //Start of click events.
     public void incrementBlueScore(View view){
-        blueScore++;
+        mBlueScore++;
         render();
     }
 
     public void incrementRedScore(View view){
-        redScore++;
+        mRedScore++;
         render();
     }
 
     public void reset(View v){
-        newGameDialogMessage.show(getSupportFragmentManager(), "reset");
+        vNewGameDialogMessage.show(getSupportFragmentManager(), "reset");
     }
 
     public void decrementBlueScore(View view){
-        if(blueScore > 0) {
-            blueScore--;
+        if(mBlueScore > 0) {
+            mBlueScore--;
         }
         render();
     }
 
     public void decrementRedScore(View view){
-        if(redScore > 0) {
-            redScore--;
+        if(mRedScore > 0) {
+            mRedScore--;
         }
         render();
     }
@@ -87,34 +112,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean redWon(){
-        return redScore >= 25 && redScore >= blueScore + 2;
+        return mRedScore >= 25 && mRedScore >= mBlueScore + 2;
     }
 
     private boolean blueWon(){
-        return blueScore >= 25 && blueScore >= redScore + 2;
+        return mBlueScore >= 25 && mBlueScore >= mRedScore + 2;
     }
 
     private void addPaddingForCharacterConcatenation(){
-        redScoreTextView.setPadding(8,32,8,32);
-        blueScoreTextView.setPadding(8,32,8,32);
+        vRedScoreTextView.setPadding(8,32,8,32);
+        vBlueScoreTextView.setPadding(8,32,8,32);
     }
 
     private void appendEndingGameText(Team winner) {
         if(winner == Team.RED){
-            redScoreTextView.setText( "W " + redScore);
-            blueScoreTextView.setText("L " + blueScore);
+            vRedScoreTextView.setText( "W " + mRedScore);
+            vBlueScoreTextView.setText("L " + mBlueScore);
         }else{
-            redScoreTextView.setText( "L " + redScore);
-            blueScoreTextView.setText("W " + blueScore);
+            vRedScoreTextView.setText( "L " + mRedScore);
+            vBlueScoreTextView.setText("W " + mBlueScore);
         }
     }
 
     public void resetScore(){
-        redScore = 0;
-        blueScore = 0;
+        mRedScore = 0;
+        mBlueScore = 0;
         //Return padding to original values.
-        blueScoreTextView.setPadding(96,32,96,32);
-        redScoreTextView.setPadding(96,32,96,32);
+        vBlueScoreTextView.setPadding(96,32,96,32);
+        vRedScoreTextView.setPadding(96,32,96,32);
 
         render();
     }
@@ -146,4 +171,29 @@ public class MainActivity extends AppCompatActivity {
             return builder.create();
         }
     }
+
+    public boolean isBluetoothLeSupported(){
+        // Use this check to determine whether BLE is supported on the device. Then
+        // you can selectively disable BLE-related features.
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+            return false;
+        }
+        return true;
+    }
+
+    public BluetoothAdapter initBluetoothAdapter(){
+        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        return bluetoothManager.getAdapter();
+    }
+
+    public boolean isBluetoothEnabled(BluetoothAdapter bluetoothAdapter){
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
+    }
+
+
+
+
+
 }
