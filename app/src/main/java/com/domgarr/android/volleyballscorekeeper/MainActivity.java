@@ -1,5 +1,6 @@
 package com.domgarr.android.volleyballscorekeeper;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -31,18 +32,34 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler;
 
     private final static int REQUEST_ENABLE_BT = 1;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isBluetoothLeSupported();
-        mBluetoothAdapter = initBluetoothAdapter();
+        //mBluetoothAdapter = initBluetoothAdapter();
 
         //Check if Bluetooth is enabled. If it's not, ask the user to turn on bluetooth.
         if(!isBluetoothEnabled(mBluetoothAdapter)){
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+            if(this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs location access");
+                builder.setMessage("Please grant location access so this app can detect beacons.");
+                builder.setPositiveButton("Ok", null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                    }
+                });
+                builder.show();
+            }
+
+
 
 
         super.onCreate(savedInstanceState);
@@ -134,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void connect(View view){
+        Intent intent = new Intent(this, BluetoothPeripheralListActivity.class);
+        startActivity(intent);
+    }
+
     public void resetScore(){
         mRedScore = 0;
         mBlueScore = 0;
@@ -183,10 +205,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public BluetoothAdapter initBluetoothAdapter(){
-        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        return bluetoothManager.getAdapter();
-    }
+
 
     public boolean isBluetoothEnabled(BluetoothAdapter bluetoothAdapter){
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
