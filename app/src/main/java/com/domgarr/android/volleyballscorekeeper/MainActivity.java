@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean mScanning;
     private Handler mHandler;
 
+    public final static int REQ_CODE_DEVICE = 1;
+
     private final static int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void connect(View view){
         Intent intent = new Intent(this, BluetoothPeripheralListActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQ_CODE_DEVICE);
     }
 
     public void resetScore(){
