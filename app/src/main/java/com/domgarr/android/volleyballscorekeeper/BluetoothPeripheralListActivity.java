@@ -9,11 +9,13 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -34,7 +36,7 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
 
-    private final int SCAN_PERIOD = 5000;
+    private final int SCAN_PERIOD = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +74,10 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
 
                 progressBar.setVisibility(View.INVISIBLE);
 
-                mAdapter = new MyAdapter(deviceNames);
+                mAdapter = new MyAdapter(deviceNames, scanResults);
                 recyclerView.setAdapter(mAdapter);
+
+
             }
         }, SCAN_PERIOD);
 
@@ -95,7 +99,6 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
             super.onScanFailed(errorCode);
         }
     };
-
 
 
     public BluetoothAdapter initBluetoothAdapter(){
