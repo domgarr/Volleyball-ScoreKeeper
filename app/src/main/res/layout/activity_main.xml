@@ -1,98 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/volleyball_court_vertical"
+    android:orientation="vertical"
     tools:context="com.domgarr.android.volleyballscorekeeper.MainActivity">
 
-    <TextView
-        android:id="@+id/red_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="16dp"
-        android:paddingBottom="32dp"
-        android:paddingTop="32dp"
-        android:paddingLeft="96dp"
-        android:paddingRight="96dp"
-        android:onClick="incrementRedScore"
-        android:text="0"
-        android:textColor="@color/line"
-        android:textSize="96dp"
-        />
-
-
+    <include
+        android:id="@+id/custom_toolbar"
+        layout="@layout/activity_main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></include>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/decrement_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="horizontal"
-
-            >
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="decrementBlueScore"
-                android:text="- Below"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="decrementRedScore"
-                android:text="- Above"
-                />
-        </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/volleyball_court_vertical"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/red_text_view"
+            android:layout_width="250sp"
+            android:layout_height="250sp"
+            android:onClick="incrementRedScore"
+            android:text="12"
+            android:textColor="#E74C3C"
+            android:textSize="100sp"
             android:gravity="center"
-            android:onClick="reset"
-            android:text="New Game"
             />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:onClick="connect"
-            android:text="BLE Connect"
-            />
 
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:background="#E74C3C"
+            android:onClick="decrementRedScore"
+            android:src="@drawable/baseline_undo_black_18" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="#3498DB"
+            android:onClick="decrementBlueScore"
+            android:src="@drawable/baseline_undo_black_18"
+             />
+
+        <TextView
+            android:id="@+id/blue_text_view"
+            android:layout_width="250sp"
+            android:layout_height="250sp"
+            android:onClick="incrementBlueScore"
+            android:text="12"
+            android:textColor="#3498DB"
+            android:textSize="100sp"
+            android:gravity="center"
+            ></TextView>
     </LinearLayout>
+</LinearLayout>
 
 
-    <TextView
-        android:id="@+id/blue_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:paddingTop="32dp"
-        android:paddingBottom="32dp"
-        android:paddingLeft="96dp"
-        android:paddingRight="96dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
-        android:onClick="incrementBlueScore"
-        android:text="0"
-        android:textColor="@color/line"
-        android:textSize="96dp"
 
-        />
-
-</RelativeLayout>
