@@ -24,7 +24,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>  {
     static View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AlphaAnimation buttonClick = new AlphaAnimation(0.2F, 0.8F);
 
             Log.d("MyAdapter", "Entering onClick method.");
 
@@ -52,7 +51,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>  {
             }else{
                 Log.d("MyAdapter", "KEY IS NULL");
             }
-            v.startAnimation(buttonClick);
         }
     };
 
