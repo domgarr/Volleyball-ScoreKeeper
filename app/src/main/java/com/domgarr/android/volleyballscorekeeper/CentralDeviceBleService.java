@@ -10,6 +10,8 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,9 +29,9 @@ public class CentralDeviceBleService {
     private BluetoothGattCharacteristic blueScoreCharacteristic;
 
     private int connectionState = STATE_DISCONNECTED;
-    private static final int STATE_DISCONNECTED = 0;
-    private static final int STATE_CONNECTING = 1;
-    private static final int STATE_CONNECTED = 2;
+    public static final int STATE_DISCONNECTED = 0;
+    public static final int STATE_CONNECTING = 1;
+    public static final int STATE_CONNECTED = 2;
 
     private Context context;
 
@@ -54,8 +56,11 @@ public class CentralDeviceBleService {
                 mGatt = gatt;
                 connectionState = STATE_CONNECTED;
                 gatt.discoverServices();
+                MainActivity.vConnectToBluetoothImageView.setColorFilter(ContextCompat.getColor(context, R.color.blutooth_connected));
             }else if(newState == BluetoothProfile.STATE_DISCONNECTED){
                 connectionState = STATE_DISCONNECTED;
+                MainActivity.vConnectToBluetoothImageView.setColorFilter(ContextCompat.getColor(context, R.color.blutooth_disconnected));
+
             }else if(newState == BluetoothProfile.STATE_CONNECTING){
                 connectionState = STATE_CONNECTING;
             }

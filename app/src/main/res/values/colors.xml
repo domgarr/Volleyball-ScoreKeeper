@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="line">#FFFDE7</color>
+    <color name="blutooth_connected">#00BFFF</color>
+    <color name="blutooth_disconnected">#B22222</color>
 </resources>

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView vRedScoreTextView;
     private TextView vBlueScoreTextView;
-    private ImageButton vConnectToBluetoothImageView;
+    public static ImageButton vConnectToBluetoothImageView;
     private ImageButton vResetScoreImageView;
 
     private int mRedScore;
@@ -62,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
         vRedScoreTextView =  findViewById(R.id.red_text_view);
         vBlueScoreTextView = findViewById(R.id.blue_text_view);
+
         vConnectToBluetoothImageView = findViewById(R.id.connect_bluetooth_image_view);
+        vConnectToBluetoothImageView.setColorFilter(ContextCompat.getColor(this, R.color.blutooth_disconnected));
+
         vResetScoreImageView = findViewById(R.id.reset_score_image_view);
 
         mRedScore = 0;
