@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -162,7 +161,8 @@ public class CentralDeviceBleService {
         if (mGatt == null) {
             return;
         }
-
+        device = null;
+        mGatt.disconnect();
         mGatt.close();
         mGatt = null;
     }
