@@ -1,38 +1,23 @@
 package com.domgarr.android.volleyballscorekeeper;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
-import android.gesture.Gesture;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import androidx.recyclerview.selection.ItemDetailsLookup;
-import androidx.recyclerview.selection.OnItemActivatedListener;
-import androidx.recyclerview.selection.SelectionTracker;
-import androidx.recyclerview.selection.StableIdKeyProvider;
-import androidx.recyclerview.selection.StorageStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-public class BluetoothPeripheralListActivity extends AppCompatActivity {
+public class BtPeripheralSearchActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -51,8 +36,7 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
 
-    private final int SCAN_PERIOD = 2000;
-
+    private final int SCAN_PERIOD = 1500;
 
 
     @Override
@@ -138,12 +122,10 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
             Log.d("SCAN RESULTS", scanResults.toString());
             if(scanResults.isEmpty()){
                 Log.d("SCAN RESULTS", "Size" + scanResults.size() );
-                Toast.makeText(BluetoothPeripheralListActivity.this, "No devices found.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BtPeripheralSearchActivity.this, "No devices found.", Toast.LENGTH_SHORT).show();
 
                 return;
             }
-
-
 
             Iterator scanResultsIterator = scanResults.entrySet().iterator();
 
@@ -152,12 +134,8 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
                 deviceNames.add( (String) pair.getKey() );
             }
 
-
-
-
-
             //Init Adapter and set to Recycler view;
-            mAdapter = new MyAdapter(deviceNames, scanResults);
+            mAdapter = new MyAdapter(getApplicationContext(), deviceNames, scanResults);
             recyclerView.setAdapter(mAdapter);
         }
     };
@@ -175,7 +153,6 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
         return bluetoothManager.getAdapter();
     }
 
-
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -185,13 +162,8 @@ public class BluetoothPeripheralListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
-
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-
-
 
 }

@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CentralDeviceBleService {
-    CentralDeviceBleService instance;
-
+    private static CentralDeviceBleService instance;
 
     private BluetoothGatt mGatt;
-    private BluetoothGattService service;
     private List<BluetoothGattService> services = new ArrayList<>();
     public static BluetoothDevice device;
 
@@ -32,28 +31,20 @@ public class CentralDeviceBleService {
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
-    public static BluetoothDevice getDevice() {
-        return device;
-    }
+    private Context context;
 
-    public static void setDevice(BluetoothDevice device) {
-        CentralDeviceBleService.device = device;
-    }
+    private CentralDeviceBleService(){ }
 
-    private CentralDeviceBleService(){
-
-
-    }
-
-    public void connectToGattService(MainActivity activity){
-        device.connectGatt(activity, true, gattCallback);
-    }
-
-    public CentralDeviceBleService getInstance(){
+    public static CentralDeviceBleService getInstance(){
         if(instance == null){
             instance = new CentralDeviceBleService();
         }
         return instance;
+    }
+
+    public void connectToGattService(Context context){
+        this.context = context;
+        device.connectGatt(context, true, gattCallback);
     }
 
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
@@ -66,7 +57,7 @@ public class CentralDeviceBleService {
             }else if(newState == BluetoothProfile.STATE_DISCONNECTED){
                 connectionState = STATE_DISCONNECTED;
             }else if(newState == BluetoothProfile.STATE_CONNECTING){
-
+                connectionState = STATE_CONNECTING;
             }
         }
 
@@ -79,15 +70,24 @@ public class CentralDeviceBleService {
 
                 services = gatt.getServices();
 
-                Log.d("service1", services.toString());
+                printAllServiceUuid(gatt);
+
+                Log.d("onServicesDiscovered", services.toString());
+
+                Log.d("onServicesDiscovered:deviceName", device.getName());
+
+                if(device.getName() == null){
+                    Log.d("onServicesDiscovered:deviceName", "Device not found.");
+                    return;
+                }
 
                 BluetoothGattService bgs1 = gatt.getService(ScoreBoardGattAttributes.scoreboard_services.get(device.getName()));
-                Log.d("service1", bgs1.getUuid().toString());
+                Log.d("onServicesDiscovered", bgs1.getUuid().toString());
 
-                Log.d("service1", bgs1.getCharacteristics().size() + "");
+                Log.d("onServicesDiscovered", bgs1.getCharacteristics().size() + "");
 
                 for (BluetoothGattCharacteristic c :  bgs1.getCharacteristics()) {
-                    Log.d( "service1", c.getUuid().toString());
+                    Log.d( "onServicesDiscovered", c.getUuid().toString());
                     if(c.getUuid().toString().contains("bbbb")){
                         blueScoreCharacteristic = c;
                         continue;
@@ -120,8 +120,6 @@ public class CentralDeviceBleService {
         return true;
     }
 
-
-
     public boolean isBluetoothEnabled(BluetoothAdapter bluetoothAdapter){
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
     }
@@ -131,8 +129,12 @@ public class CentralDeviceBleService {
             blueScoreCharacteristic.setValue(blueScore, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
             mGatt.writeCharacteristic(blueScoreCharacteristic);
         }else{
-            Log.d("writeToBlueScoreCharacteristic", "Gatt not defined");
-            Log.d("writeToBlueScoreCharacteristic", "Bluescore char not defined.");
+            if(mGatt == null) {
+                Log.d("writeToBlueScoreCharacteristic", "Gatt not defined");
+            }
+            if(blueScoreCharacteristic == null) {
+                Log.d("writeToBlueScoreCharacteristic", "Bluescore char not defined.");
+            }
         }
     }
 
@@ -141,8 +143,13 @@ public class CentralDeviceBleService {
             redScoreCharacteristic.setValue(redScore, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
             mGatt.writeCharacteristic(redScoreCharacteristic);
         }else{
-            Log.d("writeToRedScoreChar", "Gatt not defined");
-            Log.d("writeToRedScoreChar", "Red score char not defined.");
+            if(mGatt == null) {
+                Log.d("writeToRedScoreChar", "Gatt not defined");
+            }
+
+            if(redScoreCharacteristic == null) {
+                Log.d("writeToRedScoreChar", "Red score char not defined.");
+            }
         }
     }
 
@@ -155,7 +162,24 @@ public class CentralDeviceBleService {
         mGatt = null;
     }
 
+    public static BluetoothDevice getDevice() {
+        return device;
+    }
 
+    public static void setDevice(BluetoothDevice device) {
+        CentralDeviceBleService.device = device;
+    }
 
+    public int getConnectionState() {
+        return connectionState;
+    }
 
+    public void printAllServiceUuid(BluetoothGatt gatt){
+        for(BluetoothGattService service : gatt.getServices()){
+            Log.d("onServicesDiscovered:print", service.getUuid().toString());
+            for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
+                Log.d("onServicesDiscovered:print", "   " + characteristic.getUuid().toString());
+            }
+        }
+    }
 }

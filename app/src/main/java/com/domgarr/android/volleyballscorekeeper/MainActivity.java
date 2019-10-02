@@ -2,13 +2,6 @@ package com.domgarr.android.volleyballscorekeeper;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothProfile;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,14 +9,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-import java.util.ArrayList;
-import java.util.List;
 
+//TODO BLE button turns blue when connected
+//TODO button to Reverse blue and red sides
+//TODO Spamming the score increment button to quick creates inconsistancy with scores btw Sb and Android app.
 
 public class MainActivity extends AppCompatActivity {
     private DialogFragment vNewGameDialogMessage;
@@ -36,12 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private int mRedScore;
     private int mBlueScore;
 
-    private CentralDeviceBleService ble;
 
-    public final int SET_DEVICE_CODE = 2;
-    public final static String REQ_CODE_DEVICE = "ScoreboardDevice";
-
-    private final static int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     private enum Team {
@@ -90,15 +77,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (ble.getInstance().getDevice() != null) {
-            ble.getInstance().connectToGattService(this);
+        if(CentralDeviceBleService.getInstance().getDevice() != null){
+            CentralDeviceBleService.getInstance().connectToGattService(this);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ble.getInstance().close();
+        CentralDeviceBleService.getInstance().close();
     }
 
     private void render(){
@@ -113,14 +100,14 @@ public class MainActivity extends AppCompatActivity {
         mBlueScore++;
         render();
 
-        ble.getInstance().writeToBlueScoreCharacteristic(mBlueScore);
+        CentralDeviceBleService.getInstance().writeToBlueScoreCharacteristic(mBlueScore);
     }
 
     public void incrementRedScore(View view){
         mRedScore++;
         render();
 
-        ble.getInstance().writeToRedScoreCharacteristic(mRedScore);
+        CentralDeviceBleService.getInstance().writeToRedScoreCharacteristic(mRedScore);
     }
 
     public void reset(View v){
@@ -133,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         }
         render();
 
-        ble.getInstance().writeToBlueScoreCharacteristic(mBlueScore);
+        CentralDeviceBleService.getInstance().writeToBlueScoreCharacteristic(mBlueScore);
     }
 
     public void decrementRedScore(View view){
@@ -141,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             mRedScore--;
         }
         render();
-        ble.getInstance().writeToRedScoreCharacteristic(mRedScore);
+        CentralDeviceBleService.getInstance().writeToRedScoreCharacteristic(mRedScore);
     }
 
     private boolean won(){
@@ -186,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener bluetoothListListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, BluetoothPeripheralListActivity.class);
+            Intent intent = new Intent(MainActivity.this, BtPeripheralSearchActivity.class);
             startActivity(intent);
         }
     };
@@ -197,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
         mBlueScore = 0;
 
         //Update Scoreboard service
-        ble.getInstance().writeToRedScoreCharacteristic(mRedScore);
-        ble.getInstance().writeToBlueScoreCharacteristic(mBlueScore);
+        CentralDeviceBleService.getInstance().writeToRedScoreCharacteristic(mRedScore);
+        CentralDeviceBleService.getInstance().writeToBlueScoreCharacteristic(mBlueScore);
 
         render();
     }
