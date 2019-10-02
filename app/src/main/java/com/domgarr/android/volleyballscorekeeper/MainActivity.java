@@ -14,9 +14,12 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-//TODO BLE button turns blue when connected
 //TODO button to Reverse blue and red sides
 //TODO Spamming the score increment button to quick creates inconsistancy with scores btw Sb and Android app.
+//TODO add toast showing connecting to service is succesfull.
+//TODO add refresh to bluetooth connection list
+//TODO fix bluetooth disconnect icon alignment. Add more right margin to match back button
+
 
 public class MainActivity extends AppCompatActivity {
     private DialogFragment vNewGameDialogMessage;

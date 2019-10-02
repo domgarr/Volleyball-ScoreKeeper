@@ -41,7 +41,7 @@ public class BtPeripheralSearchActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
 
-    private final int SCAN_PERIOD = 1500;
+    private final int SCAN_PERIOD = 2000;
 
 
     @Override
@@ -164,10 +164,10 @@ public class BtPeripheralSearchActivity extends AppCompatActivity {
     };
 
     private void toggleProgressBar(){
-       if(progressBar.getVisibility() == View.INVISIBLE) {
+       if(progressBar.getVisibility() == View.GONE) {
            progressBar.setVisibility(View.VISIBLE);
        } else {
-           progressBar.setVisibility(View.INVISIBLE);
+           progressBar.setVisibility(View.GONE);
        }
        }
 
