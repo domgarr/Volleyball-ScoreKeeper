@@ -10,13 +10,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 //TODO button to Reverse blue and red sides
 //TODO Spamming the score increment button to quick creates inconsistancy with scores btw Sb and Android app.
-//TODO add toast showing connecting to service is succesfull.
+//TODO add toast showing connecting to service is successfull.
 //TODO add refresh to bluetooth connection list
 //TODO fix bluetooth disconnect icon alignment. Add more right margin to match back button
 
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int mRedScore;
     private int mBlueScore;
-
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
@@ -143,12 +143,10 @@ public class MainActivity extends AppCompatActivity {
             //Adjust left and right padding to accommodate the Character concatenation.
             addPaddingForCharacterConcatenation();
             appendEndingGameText(Team.RED);
-
             return true;
         }else if(blueWon()){
             addPaddingForCharacterConcatenation();
             appendEndingGameText(Team.BLUE);
-
             return true;
         }
         return false;
@@ -200,15 +198,15 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener resetScoreListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            new NewGameDialogMessage();
+            vNewGameDialogMessage.show(getSupportFragmentManager(), "reset");
         }
     };
 
      //A nested class that prompts the user before resetting.
       public static class NewGameDialogMessage extends DialogFragment {
-
           @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
+              Log.d("resetScore", "In the resetScore method");
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Are you sure you want to reset?")
